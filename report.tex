@@ -1,0 +1,58 @@
+% Adapted from https://www.overleaf.com/latex/templates/problem-set-template/bdwzvbkxyjfg
+
+\documentclass[11pt]{article}
+\usepackage[margin=1.5in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{kpfonts}
+\usepackage{graphicx} % for figures
+\usepackage{amsmath}  % for extended math markup
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{xfrac}
+\usepackage{enumerate}
+\usepackage{float}
+\usepackage[bookmarks=false]{hyperref} % for URL embedding
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Course}{CSE515T: Bayesian Methods in Machine Learning}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% these are common math formatting commands that aren't defined by default
+\newcommand{\union}{\cup}
+\newcommand{\isect}{\cap}
+\newcommand{\ceil}[1]{\ensuremath \left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\ensuremath \left\lfloor #1 \right\rfloor}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\norm}[1]{\ensuremath \mid\mid #1 \mid\mid}
+
+\DeclareMathOperator*{\argmin}{\arg\min}
+\DeclareMathOperator*{\argmax}{\arg\max}
+
+\newenvironment{problem}[2][Problem]
+{\ifnum\value{page}>1 \newpage\else\fi\noindent{\bfseries #1}  {\bfseries #2.}}
+{\mbox{}\\\vspace{-.5em}\noindent\rule{\textwidth}{0.4pt}\hfil\vspace{1em}}
+
+\numberwithin{equation}{section}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\title{Project Report}
+\author{Alexis Park, Jonathan Chen, Kevin Xie \\ \Course}
+\maketitle
+
+\section{Introduction}
+
+The Branin function (eq. \ref{eq:branin}).
+
+\begin{equation}
+  f(\bm{x}) = a(x_2 - bx_1^2 + cx_1 - r)^2 + s(1 - t)\cos(x_1) + s
+  \label{eq:branin}
+\end{equation}
+
+
+\end{document}
