@@ -2,7 +2,8 @@ Describe the behavior of the function. Does it appear stationary? (That is, does
 From the plot above, one can see that the function's values fluctuate in a somewhat sinusoidal manner, with a large minimal "trench" spanning diagonally across the center of the domain with steadly increasing regions along the trench's sides. 
 
 Can you find a transformation of the data that makes it more stationary?
-By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term, and the 6th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (arccos) with the cumulative density function of the normal probability distribution (normal cdf). Specfically, we scaled the data from [0, 1] using the normal cdf and passed the modified data through arccos to obtain a set of transformed data. The resulting plot of the transformed data is shown below.
+By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term, and the 6th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (arccos) with the cumulative density function of the normal probability distribution (normal cdf). Specfically, we scaled the data from [0, 1] using the normal cdf and passed the modified data through arccos to obtain a set of transformed data. The resulting plot of the transformed data is shown below. INSERT INTERPRETATION HERE.
 
 Make a kernel density estimate of the distribution of the values for the lda and svm benchmarks. Interpret the distributions 
-We plot the kernel density estimates 
+We plot the kernel density estimates for the SVM and LDA benchmarks below. 
+It can be seen that the two estimates have relatively similar relative behavior, but on significantly different scales. 
