@@ -178,8 +178,9 @@ We then used the Expected Improvement (EI) Acquisition Function, defined from th
   \label{eq:Expected Improvement}
 \end{equation}
 Where $\Phi(\bm{x})$ is the Cumulative Probablity Density of the Normal Distribution, and f' is the minimum value of the current observations.
+Note that the EI acquisition function combines both exploitation and exploration by using both the posterior mean and known minimum value, and the posterior standard deviation, respectively. 
 
-Using the previously selected 32 points, a GP model was fit using the aforementioned model settings and the following heatmaps of the posterior mean and standard deviation of the Branin function were created:
+Using the previously selected 32 points, a GP model was fit using the aforementioned optmized settings and the following heatmaps of the posterior mean and standard deviation of the Branin function were created:
 
 \begin{figure}[H]
   \centering
@@ -210,8 +211,8 @@ A heatmap of the EI distribution is shown below:
 
 Analyzing \ref{fig:ei-fmu-log}, \ref{fig:ei-fs-log}, and \ref{fig:ei-optimalPoint-log} above, we reason that the proposed optimal testing point is ideal. 
 From the posterior mean, it can be seen that the point [7.658, 0] is within a region of predicted minimal values.
-Futhermore, from the posterior standard deviation, it can be seen that the point is within a region of higher uncertainty and therefore reduced predictive confidence.
-Thus, it is plausible that the EI acquisition function would seek to test this area and point in order to identify a possiblly global minimum and improve confidence in an area of uncertainty. 
+Futhermore, from the posterior standard deviation, it can be seen that the point is also within a region of higher uncertainty and therefore reduced predictive confidence.
+Thus, it is plausible that the EI acquisition function would seek to test this area and point in order to identify a possible global minimum and improve confidence in an area of uncertainty. 
 
 The following bayesian active learning experiment was then applied independently to the Branin, LDA and SVM functions:
 \begin{enumerate}
@@ -223,7 +224,7 @@ The following bayesian active learning experiment was then applied independently
   \item Steps 3-5 were repeated 30 times, resulting in a final dataset $\mathcal{D}$ of 35 points
 \end{enumerate}
 
-The performance of each of the above experiments were evaluated using the "gap" measure, defined for minimization as:
+The performance of each of the above experiments was evaluated using the "gap" measure, defined for minimization as:
 \begin{equation}
   \text{gap} = \dfrac{f(\text{best found}) - f(\text{best initial})}{f(\text{maximum}) - f(\text{best initial})}
   \label{eq:gap}
@@ -242,35 +243,72 @@ The above bayesian active learning experiment was then modified as such:
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$
   \item Steps 4-6 were repeated 150 times, resulting in a final dataset $\mathcal{D}$ of 155 points
   \item A new GP model using the respective aforementioned optimized setting was fit to the original initial dataset $\mathcal{D}$, now called $\mathcal{D}$'
-  \item A new point \emph{x} was found using the Random acquisition function, which randomly selects a new point
+  \item A new point \emph{x} was found using the Random Search (RS) acquisition function, which randomly selects a new point
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$'
   \item Steps 8-10 were repeated 150 times, resulting in a final dataset $\mathcal{D}$' of 155 points
 \end{enumerate}
-The above experiment was repeated 20 times with 20 different RNG seeds to create different random initializations for the Branin, LDA and SVM functions, resulting in a total of 60 experiments. 
-The learning curves of the 60 experiments using only the first 30 new observations for both EI and Random acquisition are shown in the figures below:
+The above experiment was repeated 20 times with 20 different RNG seeds to create different random initializations for the Branin, LDA, and SVM functions, resulting in a total of 60 experiments. 
+The learning curves of the 60 experiments using only the first 30 new observations for both EI and RS acquisition are shown in the figures below:
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/optimization_log_branin.eps}
-  \caption{Learning curves for 20 branin function experiments. <<<>>>}
+  \caption{Learning curves for 20 branin function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
+  Observe that EI consistently outperforms RS in both rate of GAP increase, and final GAP convergence at 30 observations.}
   \label{fig:ei-v-rand-branin}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/optimization_log_lda.eps}
-  \caption{Learning curves for 20 LDA function experiments. <<<>>>}
+  \caption{Learning curves for 20 LDA function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
+  Note that EI and RS both consistently converge towards the same GAP value at 30 observations}
   \label{fig:ei-v-rand-lda}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/optimization_norm_svm.eps}
-  \caption{Learning curves for 20 SVM function experiments. <<<>>>}
+  \caption{Learning curves for 20 SVM function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange.
+  It can be seen that EI performs at least as well as RS in the majority of experiments, but can find and get stuck in a local minima, as seen in Seed 18.}
   \label{fig:ei-v-rand-svm}
 \end{figure}
-From figures \ref{fig:ei-v-rand-branin}, \ref{fig:ei-v-rand-lda}, and \ref{fig:ei-v-rand-svm} above, it can be seen that EI significantly outperforms Random search.
-<<>>.
+From figures \ref{fig:ei-v-rand-branin}, and \ref{fig:ei-v-rand-svm} above, it can be seen that EI significantly outperforms RS on both the Branin Function and the SVM Function.
+Note that in these experiments, EI often converges to its final GAP value in significantly fewer observations than RS does, and that its final GAP values at 30 observations are generally higher than those of RS.
+This behavior was expected, as EI combines both exploitation and exploration together to identify locations with higher expected benefit, whereas RS only applies (random) exploration.
+The addition of exploitation and non-random exploration in EI allows it to actually navigate towards optima, whereas RS can only approach optima through luck. 
+However, there are cases where EI and RS have similar performance: from figure \ref{fig:ei-v-rand-lda}, it can be seen that the two acqusition functions perform similarly to each other in the majority of experiments at 30 observations. 
+We believe that EI's lack of performance on the LDA function can be attributed to a large amount of local minima; EI can often become stuck in local minima, thereby decreasing its performance, whereas RS is purely exploratory and therefore unhindered by the presence of any local optima.
 
-We then found the mean GAP for EI and Random Search using the first 30, 60, 90, 120 and 150 observations. The calculated results are shown 
+The difference in performance between EI and RS can be further seen when one considers their mean gaps at 30, 60, 90, 120 and 150 observations, 
+as shown in the table below:
+\begin{center}
+  \begin{tabular}{ |c|c|c| } 
+   \hline
+   Observations & EI (Branin)& RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
+   \hline
+   30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
+   \hline
+   60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
+   \hline
+   90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
+   \hline
+   120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
+   \hline
+   150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
+  \end{tabular}
+  \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
+  Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
+  EI achieves these higher values significantly faster than RS.}
+  \label{}
+\end{center}
+In all cases, it is evident that EI outperforms RS on all three functions, including LDA, at 150 observations. 
+Additionally, EI requires less observations to achieve higher gap values, implying a significantly faster learning rate than RS.
+We also note that EI likely spends considerable time navigating local minima in the LDA function, 
+as evident by its noticeably worse performance at 30 observations when compared to that of RS. 
+However, EI for LDA rapidly improves following this local-minima exploration and quickly outperforms RS. 
+It is also important to note that on average, no method was able to find the global minima. 
+This result was expected for RS, which would need to be extraordinarily lucky to find the global minima, but was somewhat surprising for EI.
+It appears that in the limit, EI may become entrenched in local minima and thus converges towards a suboptimal result. 
 
+We more rigorously compare the performance of EI and RS using a paired t-test. The null hypothesis of the test 
 
 
 \section*{Bonus}
