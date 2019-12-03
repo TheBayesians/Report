@@ -240,16 +240,37 @@ The above bayesian active learning experiment was then modified as such:
   \item A GP model using the respective aforementioned optimized settings was fit to $\mathcal{D}$
   \item A new point \emph{x} was found using the EI acquisition function and the GP predictive posterior
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$
-  \item Steps 4-6 were repeated 30 times, resulting in a final dataset $\mathcal{D}$ of 35 points
+  \item Steps 4-6 were repeated 150 times, resulting in a final dataset $\mathcal{D}$ of 155 points
   \item A new GP model using the respective aforementioned optimized setting was fit to the original initial dataset $\mathcal{D}$, now called $\mathcal{D}$'
   \item A new point \emph{x} was found using the Random acquisition function, which randomly selects a new point
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$'
   \item Steps 8-10 were repeated 150 times, resulting in a final dataset $\mathcal{D}$' of 155 points
 \end{enumerate}
+The above experiment was repeated 20 times with 20 different RNG seeds to create different random initializations for the Branin, LDA and SVM functions, resulting in a total of 60 experiments. 
+The learning curves of the 60 experiments using only the first 30 new observations for both EI and Random acquisition are shown in the figures below:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/optimization_log_branin.eps}
+  \caption{Learning curves for 20 branin function experiments. <<<>>>}
+  \label{fig:ei-v-rand-branin}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/optimization_log_lda.eps}
+  \caption{Learning curves for 20 LDA function experiments. <<<>>>}
+  \label{fig:ei-v-rand-lda}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/optimization_norm_svm.eps}
+  \caption{Learning curves for 20 SVM function experiments. <<<>>>}
+  \label{fig:ei-v-rand-svm}
+\end{figure}
+From figures \ref{fig:ei-v-rand-branin}, \ref{fig:ei-v-rand-lda}, and \ref{fig:ei-v-rand-svm} above, it can be seen that EI significantly outperforms Random search.
+<<>>.
 
+We then found the mean GAP for EI and Random Search using the first 30, 60, 90, 120 and 150 observations. The calculated results are shown 
 
-repeated 20 times with 20 different random number generator seeds to create different random initializations. 
-However, in addition to the EI acquisition function, a random search acquisition function that randomly selected the next point to observe was implemented as a baseline\dots
 
 
 \section*{Bonus}
