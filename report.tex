@@ -12,8 +12,8 @@
 \usepackage{xfrac}
 \usepackage{enumerate}
 \usepackage{float}
+\usepackage{multirow}
 \usepackage[bookmarks=false]{hyperref} % for URL embedding
-%\usepackage{parskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -77,34 +77,15 @@ In order to make the function more stationary, we tried couple of transformation
   \label{fig:log_branin_heatmap}
 \end{figure}
 
-Now, we plotted kernel density estimate (KDE) of LDA and SVM benchmarks shown in \ref{fig:lda_kde} and \ref{fig:svm_kde}. By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
+Now, we plotted kernel density estimate (KDE) of LDA and SVM benchmarks (Fig.  \ref{fig:kde-lda-svm}A and \ref{fig:kde-lda-svm}C). By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
 
-Since both KDEs show log-normal distribution, taking log of values gave us the normal distribution, which will give better performance. As shown in \ref{fig:lda_kde_log} and \ref{fig:svm_kde_log}, both KDEs are more distributed throughout the graph and relatively less concentrated around the peak.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/lda_kde.eps}
-  \caption{Kernel Density Estimate of the LDA values}
-  \label{fig:lda_kde}
-\end{figure}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/svm_kde.eps}
-  \caption{Kernel Density Estimate of the SVM values}
-  \label{fig:svm_kde}
-\end{figure}
+Since both KDEs show log-normal distribution, taking log of values gave us the normal distribution, which will give better performance (Fig. \ref{fig:kde-lda-svm}B and \ref{fig:kde-lda-svm}D). Both KDEs are more distributed throughout the graph and relatively less concentrated around the peak.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/lda_kde_log.eps}
-  \caption{Kernel Density Estimate of the log(LDA values)}
-  \label{fig:lda_kde_log}
-\end{figure}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/svm_kde_log.eps}
-  \caption{Kernel Density Estimate of the log(SVM values)}
-  \label{fig:svm_kde_log}
+  \includegraphics[width=\textwidth]{figures/kde_lda_svm.eps}
+  \caption{Kernel density estimates for LDA (green, A and B) and SVM (purple, C and D) datasets, along with estimates for their logs.}
+  \label{fig:kde-lda-svm}
 \end{figure}
 
 \section*{Model fitting}
@@ -115,10 +96,10 @@ For model fitting, we used 32 Sobol Sequence Branin Function training points and
     mean: 137.1865
   \item
     cov: [1.3864 4.7366]
-  \item
-    lik: -6.5951
+    length: 4.004
+    output: 114.046
 \end{itemize}
-The covariance is a log transformation output, so the actual range would be [4.0004 114.046].
+During the procedure, we also had to fit likelihood, which we retrieve 0.001 noise likelihood.
 \textbf{Q: Do they agree with your expectations given your visualization?}
 Based on the \ref{fig:gp_post_mean_heatmap}, the mean should be around 150 which is reflected in our hyperparameter. The covariance value is also around ...INSERT INTERPRETATION
 
@@ -145,8 +126,7 @@ Comparing the predicted GP Posterior Mean and the True Branin Function values, \
   \caption{Heatmap of the GP Posterior standard deviation}
   \label{fig:gp_post_std}
 \end{figure}
-Q: Do the values make sense? Does the scale make sense? Does the standard
-deviation drop to near zero at your data points?
+\textbf{Q: Do the values make sense? Does the scale make sense? Does the standard deviation drop to near zero at your data points?}
 
 \begin{figure}[H]
   \centering
@@ -157,40 +137,94 @@ deviation drop to near zero at your data points?
 Based on \ref{fig:zscore_kde}, the KDE of Z-score distribution follows approximately standard normal distrubtion with more concentrated peak in the middle.
 
 \subsection*{Model fitting with log transformation of Branin Function}
-Now, we repeated model fitting using a log transformation to the output of the Branin function.
+Now, we repeated model fitting using a log transformation to the output of the Branin function. After maximizing the marginal likelihood with same condition as previous, we got the following values of hyperparameters:
+\begin{itemize}
+  \item
+    mean: 3.6227
+  \item
+    cov: [1.2007 0.4896]
+    length: 3.3224
+    output: 1.6316
+\end{itemize}
+During the procedure, we also had to fit likelihood, which we retrieve 0.001 noise likelihood.
 
+\textbf{Q: Do they agree with your expectations given your visualization}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_Mean_Log.png}
+  \caption{Heatmap of GP Posterior Mean of log transformed Branin Function values}
+  \label{fig:gp_post_mean_log}
+\end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_vs_Log_True.png}
-  \caption{}
-  \label{}
+  \caption{Heatmap of GP Posterior Mean and True log transformed Branin Function values}
+  \label{fig:gp_post_mean_true_log}
 \end{figure}
-Q: Compare
-the predicted values with the true values. Do you see systematic errors?
+\textbf{Q: Compare the predicted values with the true values. Do you see systematic errors?}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_S2_and_Training_points.png}
-  \caption{}
-  \label{}
+  \caption{Heatmap of GP Posterior Standard Deviation of log transformed Branin Funciton values}
+  \label{fig:gp_post_std_log}
 \end{figure}
-Q: Do the values make sense? Does the scale make sense? Does the standard
-deviation drop to near zero at your data points?
+
+\textbf{Q: Do the values make sense? Does the scale make sense? Does the standard deviation drop to near zero at your data points?}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Log Fits/Z_Score_KDE.png}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of z-score of log transformed Branin Function values}
+  \label{fig:zscore_kde_log}
 \end{figure}
+Based on \ref{fig:zscore_kde_log}, the KDE of Z-score distribution follows approximately standard normal distrubtion, but much higher peak.
 
-
-LOGS:
-Q:  Does the
-marginal likelihood improve? Does the model appear better calibrated?
+\textbf{Q: Does the marginal likelihood improve? Does the model appear better calibrated?}
 
 \subsection*{Bayesian Information Criterion (BIC)}
+In order to compare which model fits better with the dataset, we used BIC to derive a score for how well those choices fit a given dataset. To compute the BIC, we found the values of the hyperparameters maximizing the (log) marginal likelihood using \ref{eq:hyperparameter-estimate}, and then used \ref{eq:bic} where $\mid \theta \mid$ is the total number of hyperparameters and $\mid \data \mid$ is the number of observations. We used 3 for $\mid \theta \mid$ and 32 for $\mid \data \mid$. 
+
+Based on \ref{eq:bic}, we want to minimize the first term as we do not want to overfit the model, but maximize the second term, which is increasing likelihood as higher likelihood is given when the model fits the dataset.
+
+\begin{equation}
+  \hat \theta = \argmax_\theta \log p(y \mid X, \theta)
+  \label{eq:hyperparameter-estimate}
+\end{equation}
+
+\begin{equation}
+  \text{BIC} = \mid \theta \mid \log \mid \data \mid - 2 \log p(y \mid X, \hat \theta)
+  \label{eq:bic}
+\end{equation}
+
+\textbf{Compute the bic score for the data and model from the last part.}
+
+Now considering BIC as a function of the choice of mean and covariance functions $(\mu, K)$, we used MeanConst and 4 differenct covariance functions, covSEiso, covRQiso, sum of SE and RQ, and product of SE and RQ. \ref{tab:bic_score} shows the best model and BIC scores we found.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c | c |}
+    \hline
+    Data       & Model    & BIC score \\
+    \hline
+    Branin     & covRQiso & 299.367   \\
+    \hline
+    log Branin & covSEiso & 61.471    \\
+    \hline
+    LDA        & covProd  & 6.777e+06 \\
+    \hline
+    log LDA    & covRQiso & 17.298    \\
+    \hline
+    SVM        & covProd  & -138.894  \\
+    \hline
+    log SVM    & covRQiso & -77.547   \\
+    \hline
+  \end{tabular}
+  \caption{Computed BIC scores and best model for different datasets}
+  \label{tab:bic_score}
+\end{table}
 
 \section*{Bayesian optimization}
 
@@ -306,26 +340,28 @@ We believe that EI's lack of performance on the LDA function can be attributed t
 
 The difference in performance between EI and RS can be further seen when one considers their mean gaps at 30, 60, 90, 120 and 150 observations, 
 as shown in the table below:
-% \begin{center}
-%   \begin{tabular}{ |c|c|c| } 
-%    \hline
-%    Observations & EI (Branin)& RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
-%    \hline
-%    30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
-%    \hline
-%    60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
-%    \hline
-%    90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
-%    \hline
-%    120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
-%    \hline
-%    150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
-%   \end{tabular}
-%   \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
-%   Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
-%   EI achieves these higher values significantly faster than RS.}
-%   \label{}
-% \end{center}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c | c | c | c | c | c |}
+    \hline
+    \# Observations & EI (Branin) & RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
+    \hline
+    30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
+    \hline
+    60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
+    \hline
+    90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
+    \hline
+    120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
+    \hline
+    150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
+    \hline
+   \end{tabular}
+   \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
+   Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
+   EI achieves these higher values significantly faster than RS.}
+   \label{tab:ei-rs-datasets}
+\end{table}
 
 In all cases, it is evident that EI outperforms RS on all three functions, including LDA, at 150 observations. 
 Additionally, EI requires less observations to achieve higher gap values, implying a significantly faster learning rate than RS.
@@ -339,34 +375,43 @@ It appears that in the limit, EI may become entrenched in local minima and thus 
 We more rigorously compare the performance of EI and RS on all three functions using a paired t-test and evaluate the null hypothesis that the gap values attained for EI and RS come from the same distribution (i.e. the performance of EI and RS are equivalent or similar).
 We begin the test using only 30 observations for both EI and RS and calculate the corresponding p-values, as seen in the table below:
 
-% \begin{center}
-%   \begin{tabular}{|c|c|}
-%     \hline
-%     Function & P-Value \\
-%     \hline
-%     Branin & 5.39E-04
-%     \hline
-%     LDA & 0.3774
-%     \hline
-%     SVM & 0.0387
-%   \end{tabular}
-% \end{center}
-
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c |}
+    \hline
+    Function & P-Value  \\
+    \hline
+    Branin   & 5.39E-04 \\
+    \hline
+    LDA      & 0.3774   \\
+    \hline
+    SVM      & 0.0387   \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{tab:ei-rs-p}
+\end{table}
 
 We then begin RS at one observation and incremement the number of observations for RS while holding EI at 30 observations until the P-value exceeeds 0.05.
 The resultant number of observations before RS attains possibly similar performance as EI is shown below:
-% \begin{center}
-%   \begin{tabular}{|c|c|}
-%     \hline
-%     Function & Observations Required & P-Value \\
-%     \hline
-%     Branin & 59 & 0.0624
-%     \hline
-%     LDA & 10 & 0.0599
-%     \hline
-%     SVM & 3 & 0.0951
-%   \end{tabular}
-% \end{center}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| c | c | c |}
+    \hline
+    Function & Observations Required & P-Value \\
+    \hline
+    Branin & 59 & 0.0624 \\
+    \hline
+    LDA & 10 & 0.0599 \\
+    \hline
+    SVM & 3 & 0.0951 \\
+    \hline
+  \end{tabular}
+  \caption{}
+  \label{}
+\end{table}
+
 Look at tables <><> and <><>, one can see that in the branin function, EI significantly outperforms RS. 
 It isn't until 59 additional points have been observed before RS and EI show possibly similar performance.
 However, it is also evident that RS likely performs as well as EI on the LDA function. This was expected, given their similar learning curves above in figure \ref{fig:ei-v-rand-lda}.
@@ -375,15 +420,28 @@ However, as the number of observations increase, the two methods begin to differ
 Another similarly iterative paired t-test experiment was performed, and it was determined that 44 new observations are required before the performance of EI and RS remain consistently comparable.
 
 \section*{Bonus}
-For the bonus section, we implemented two more acquisition functions: Lower
-Confidence Bound (LCB) and Max Variance. We then compared their performances
+For the bonus section, we implemented two more acquisition functions: max variance and lower confidence bound (LCB). We chose to implement max variance as one of our acquisition functions because it seemed like an intuitive way to explore a function's values and shape
+
+\begin{align}
+  \alpha_{\max \text{Var}}(x) = K(x, x)
+\end{align}
+
+We then compared their performances
 with EI when used on their own and with two heuristics.
 
 First, we implemented a wrapper for aquisition functions that selects a point
 at random with probability $p = 0.1$; we dubbed this heuristic ``random
 restarts'' (RR). We also tried each aquisition function while minimizing the
 model's hyperparameters after each iteration; we called this ``online
-optimization'' (OO). 
+optimization'' (OO).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/bonus-gaps.eps}
+  \caption{A busy plot showing gap as a function of the number of
+  observations made.}
+  \label{fig:bonus-gaps}
+\end{figure}
 
 
 \end{document}
