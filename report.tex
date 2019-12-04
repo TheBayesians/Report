@@ -75,18 +75,20 @@ In order to make the function more stationary, we tried couple of transformation
   \label{fig:log_branin_heatmap}
 \end{figure}
 
-Now, we plotted kernel density estimates of LDA and SVM benchmarks. It can be seen that the two estimates have relatively similar relative
-behavior but on significantly different scales.
+Now, we plotted ernel density estimate (KDE) of LDA and SVM benchmarks shown in \ref{fig:lda_kde} and \ref{fig:svm_kde}. By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
+
+
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/lda_kde.eps}
-  \caption{Kernel Density Estimate of the LDA values.}
+  \caption{Kernel Density Estimate of the LDA values}
   \label{fig:lda_kde}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/svm_kde.eps}
-  \caption{Kernel Density Estimate of the SVM values.}
+  \caption{Kernel Density Estimate of the SVM values}
   \label{fig:svm_kde}
 \end{figure}
 
