@@ -29,6 +29,8 @@
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\norm}[1]{\ensuremath \mid\mid #1 \mid\mid}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\data}{\mc{D}}
 
 \DeclareMathOperator*{\argmin}{\arg\min}
 \DeclareMathOperator*{\argmax}{\arg\max}
@@ -55,44 +57,41 @@ The Branin function is defined as follows:
   \label{eq:branin}
 \end{equation}
 
-With domain X=[-5, 10] x [0, 15]  with 1000 values per dimension, figure 1 shows a heatmap of the value of the Branin function.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Data Visualization/trueBraninHeatmap.png}
-  \caption{Heatmap of True Branin Function Values}
-  \label{}
+  \caption{Heatmap of True Branin Function values with domain $\mc{X} = [-5, 10] \times [0, 15]$  with 1000 values per dimension.}
+  \label{fig:true_branin_heatmap}
 \end{figure}
 
-From the plot above, one can see that the function's values fluctuate in a somewhat sinusoidal manner, with a large minimal "trench" spanning diagonally across the center of the domain with steadly increasing regions along the trench's sides. Therefore the function does not appear to be stationary.
+From \ref{fig:true_branin_heatmap}, one can see that the function's values fluctuate in a somewhat sinusoidal manner, with a large minimal "trench" spanning diagonally across the center of the domain with steadly increasing regions along the trench's sides. Therefore the function does not appear to be stationary.
 
-By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term, and the 6th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (arccos) with the cumulative density function of the normal probability distribution (normal cdf). Specfically, we scaled the data from [0, 1] using the normal cdf and passed the modified data through arccos to obtain a set of transformed data. The resulting plot of the transformed data is shown below.
+In order to make the function more stationary, we tried couple of transformations. By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term and the 4th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (\emph{arc cos}) with the cumulative density function of the normal probability distribution (\emph{normal cdf}). However, taking the \emph{log} of the data gave us the most stationary result as shown in \ref{fig:log_branin_heatmap}. 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Data Visualization/Log_Branin_Heatmap.png}
-  \caption{}
-  \label{}
+  \caption{Heatmap of logged Branin Function values with domain $\mc{X} = [-5, 10] \times [0, 15]$  with 1000 values per dimension. The plot shows the behavior of the Branin Function relatively more constant throughout the domain compare to the original function behavior.}
+  \label{fig:log_branin_heatmap}
 \end{figure}
-Figure 2 shows more stationary [INSERT MORE INTERPRETATION]
 
-Now, we plotted kernel density estimates of LDA and SVM benchmark data.
+Now, we plotted kernel density estimates of LDA and SVM benchmarks. It can be seen that the two estimates have relatively similar relative
+behavior but on significantly different scales.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/lda_kde.eps}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of the LDA values.}
+  \label{fig:lda_kde}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/svm_kde.eps}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of the SVM values.}
+  \label{fig:svm_kde}
 \end{figure}
-We plot the kernel density estimates for the SVM and LDA benchmarks below. 
-It can be seen that the two estimates have relatively similar relative
-behavior but on significantly different scales.
 
-Similar to Branin function, we also took log of the LDA and SVM values to make the performance better. Plotted data is shown in figure 5 and 6.
+
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/lda_kde_log.eps}
@@ -251,21 +250,21 @@ The above experiment was repeated 20 times with 20 different RNG seeds to create
 The learning curves of the 60 experiments using only the first 30 new observations for both EI and RS acquisition are shown in the figures below:
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/optimization_log_branin.eps}
+  \includegraphics[width=\textwidth]{figures/optimization_log_branin.eps}
   \caption{Learning curves for 20 branin function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
   Observe that EI consistently outperforms RS in both rate of GAP increase, and final GAP convergence at 30 observations.}
   \label{fig:ei-v-rand-branin}
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/optimization_log_lda.eps}
+  \includegraphics[width=\textwidth]{figures/optimization_log_lda.eps}
   \caption{Learning curves for 20 LDA function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
   Note that EI and RS both consistently converge towards the same GAP value at 30 observations}
   \label{fig:ei-v-rand-lda}
 \end{figure}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/optimization_norm_svm.eps}
+  \includegraphics[width=\textwidth]{figures/optimization_norm_svm.eps}
   \caption{Learning curves for 20 SVM function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange.
   It can be seen that EI performs at least as well as RS in the majority of experiments, but can find and get stuck in a local minima, as seen in Seed 18.}
   \label{fig:ei-v-rand-svm}
@@ -279,26 +278,26 @@ We believe that EI's lack of performance on the LDA function can be attributed t
 
 The difference in performance between EI and RS can be further seen when one considers their mean gaps at 30, 60, 90, 120 and 150 observations, 
 as shown in the table below:
-\begin{center}
-  \begin{tabular}{ |c|c|c| } 
-   \hline
-   Observations & EI (Branin)& RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
-   \hline
-   30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
-   \hline
-   60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
-   \hline
-   90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
-   \hline
-   120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
-   \hline
-   150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
-  \end{tabular}
-  \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
-  Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
-  EI achieves these higher values significantly faster than RS.}
-  \label{}
-\end{center}
+% \begin{center}
+%   \begin{tabular}{ |c|c|c| } 
+%    \hline
+%    Observations & EI (Branin)& RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
+%    \hline
+%    30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
+%    \hline
+%    60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
+%    \hline
+%    90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
+%    \hline
+%    120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
+%    \hline
+%    150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
+%   \end{tabular}
+%   \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
+%   Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
+%   EI achieves these higher values significantly faster than RS.}
+%   \label{}
+% \end{center}
 In all cases, it is evident that EI outperforms RS on all three functions, including LDA, at 150 observations. 
 Additionally, EI requires less observations to achieve higher gap values, implying a significantly faster learning rate than RS.
 We also note that EI likely spends considerable time navigating local minima in the LDA function, 
