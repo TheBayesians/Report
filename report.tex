@@ -13,6 +13,7 @@
 \usepackage{enumerate}
 \usepackage{float}
 \usepackage[bookmarks=false]{hyperref} % for URL embedding
+%\usepackage{parskip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -46,6 +47,7 @@
 \begin{document}
 \title{Project Report}
 \author{Alexis Park, Jonathan Chen, Kevin Xie \\ \Course}
+
 \maketitle
 
 \section*{Data visualization}
@@ -75,9 +77,9 @@ In order to make the function more stationary, we tried couple of transformation
   \label{fig:log_branin_heatmap}
 \end{figure}
 
-Now, we plotted ernel density estimate (KDE) of LDA and SVM benchmarks shown in \ref{fig:lda_kde} and \ref{fig:svm_kde}. By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
+Now, we plotted kernel density estimate (KDE) of LDA and SVM benchmarks shown in \ref{fig:lda_kde} and \ref{fig:svm_kde}. By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
 
-
+Since both KDEs show log-normal distribution, taking log of values gave us the normal distribution, which will give better performance. As shown in \ref{fig:lda_kde_log} and \ref{fig:svm_kde_log}, both KDEs are more distributed throughout the graph and relatively less concentrated around the peak.
 
 \begin{figure}[H]
   \centering
@@ -92,37 +94,56 @@ Now, we plotted ernel density estimate (KDE) of LDA and SVM benchmarks shown in 
   \label{fig:svm_kde}
 \end{figure}
 
-
-
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/lda_kde_log.eps}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of the log(LDA values)}
+  \label{fig:lda_kde_log}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/svm_kde_log.eps}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of the log(SVM values)}
+  \label{fig:svm_kde_log}
 \end{figure}
 
 \section*{Model fitting}
+\subsection*{Model fitting with Branin Function}
+For model fitting, we used 32 Sobol Sequence Branin Function training points and fit the data to the Gaussian Process model with constant mean value of 0, squared exponential covariance with constant value of length scale and output scale of 1. After maximizing the marginal likelihood, we got the following values of hyperparameters:
+\begin{itemize}
+  \item
+    mean: 137.1865
+  \item
+    cov: [1.3864 4.7366]
+  \item
+    lik: -6.5951
+\end{itemize}
+The covariance is a log transformation output, so the actual range would be [4.0004 114.046].
+\textbf{Q: Do they agree with your expectations given your visualization?}
+Based on the \ref{fig:gp_post_mean_heatmap}, the mean should be around 150 which is reflected in our hyperparameter. The covariance value is also around ...INSERT INTERPRETATION
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_Mean.png}
+  \caption{Heatmap of GP Posterior Mean}
+  \label{fig:gp_post_mean_heatmap}
+\end{figure}
+
+Comparing the predicted GP Posterior Mean and the True Branin Function values, \ref{fig:gp_postmean_and_trueval} shows that the true points have the darkest spots on the heatmap, which represents that the predicted and true values are almost alike. \textbf{Do you see systematic errors?} On the heatmap, places where we don't have the Branin Function values, as it gets farther away from the points, there are more absolute differences exist between predicted and true values.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_Mean_vs_True_Branin.png}
-  \caption{}
-  \label{}
+  \caption{Heatmap of GP Posterior Mean and True Branin values}
+  \label{fig:gp_postmean_and_trueval}
 \end{figure}
-Q: Compare
-the predicted values with the true values. Do you see systematic errors?
+
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_s2_With_Training_Points.png}
-  \caption{}
-  \label{}
+  \caption{Heatmap of the GP Posterior standard deviation}
+  \label{fig:gp_post_std}
 \end{figure}
 Q: Do the values make sense? Does the scale make sense? Does the standard
 deviation drop to near zero at your data points?
@@ -130,12 +151,15 @@ deviation drop to near zero at your data points?
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Model Fitting/Z_Score_KDE.png}
-  \caption{}
-  \label{}
+  \caption{Kernel Density Estimate of the z-scores of the residuals between the GP posterior mean and true values}
+  \label{fig:zscore_kde}
 \end{figure}
-Based on figure 9, the KDE of Z-score distribution follows approximately standard normal distrubtion with more concentrated peak in the middle.
+Based on \ref{fig:zscore_kde}, the KDE of Z-score distribution follows approximately standard normal distrubtion with more concentrated peak in the middle.
 
+\subsection*{Model fitting with log transformation of Branin Function}
 Now, we repeated model fitting using a log transformation to the output of the Branin function.
+
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_vs_Log_True.png}
@@ -165,6 +189,8 @@ deviation drop to near zero at your data points?
 LOGS:
 Q:  Does the
 marginal likelihood improve? Does the model appear better calibrated?
+
+\subsection*{Bayesian Information Criterion (BIC)}
 
 \section*{Bayesian optimization}
 
