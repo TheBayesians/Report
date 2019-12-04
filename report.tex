@@ -298,6 +298,7 @@ as shown in the table below:
 %   EI achieves these higher values significantly faster than RS.}
 %   \label{}
 % \end{center}
+
 In all cases, it is evident that EI outperforms RS on all three functions, including LDA, at 150 observations. 
 Additionally, EI requires less observations to achieve higher gap values, implying a significantly faster learning rate than RS.
 We also note that EI likely spends considerable time navigating local minima in the LDA function, 
@@ -307,8 +308,43 @@ It is also important to note that on average, no method was able to find the glo
 This result was expected for RS, which would need to be extraordinarily lucky to find the global minima, but was somewhat surprising for EI.
 It appears that in the limit, EI may become entrenched in local minima and thus converges towards a suboptimal result. 
 
-We more rigorously compare the performance of EI and RS using a paired t-test. The null hypothesis of the test 
+We more rigorously compare the performance of EI and RS on all three functions using a paired t-test and evaluate the null hypothesis that the gap values attained for EI and RS come from the same distribution (i.e. the performance of EI and RS are equivalent or similar).
+We begin the test using only 30 observations for both EI and RS and calculate the corresponding p-values, as seen in the table below:
 
+% \begin{center}
+%   \begin{tabular}{|c|c|}
+%     \hline
+%     Function & P-Value \\
+%     \hline
+%     Branin & 5.39E-04
+%     \hline
+%     LDA & 0.3774
+%     \hline
+%     SVM & 0.0387
+%   \end{tabular}
+% \end{center}
+
+
+We then begin RS at one observation and incremement the number of observations for RS while holding EI at 30 observations until the P-value exceeeds 0.05.
+The resultant number of observations before RS attains possibly similar performance as EI is shown below:
+% \begin{center}
+%   \begin{tabular}{|c|c|}
+%     \hline
+%     Function & Observations Required & P-Value \\
+%     \hline
+%     Branin & 59 & 0.0624
+%     \hline
+%     LDA & 10 & 0.0599
+%     \hline
+%     SVM & 3 & 0.0951
+%   \end{tabular}
+% \end{center}
+Look at tables <><> and <><>, one can see that in the branin function, EI significantly outperforms RS. 
+It isn't until 59 additional points have been observed before RS and EI show possibly similar performance.
+However, it is also evident that RS likely performs as well as EI on the LDA function. This was expected, given their similar learning curves above in figure \ref{fig:ei-v-rand-lda}.
+Perhaps more interestingly, the performance of RS varies significantly relative to that of EI; when there are less observations, the two acqusition methods demonstrate similar performance. 
+However, as the number of observations increase, the two methods begin to differ. 
+Another similarly iterative paired t-test experiment was performed, and it was determined that 44 new observations are required before the performance of EI and RS remain consistently comparable.
 
 \section*{Bonus}
 For the bonus section, we implemented two more acquisition functions: Lower
