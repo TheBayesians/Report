@@ -13,6 +13,7 @@
 \usepackage{enumerate}
 \usepackage{float}
 \usepackage{multirow}
+\usepackage[margin=1cm]{caption}
 \usepackage[bookmarks=false]{hyperref} % for URL embedding
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,144 +51,144 @@
 
 \maketitle
 
-\section*{Data visualization}
+\section{Data visualization}
 
-The Branin function is defined as follows:
+The Branin Function is defined as follows:
 
 \begin{equation}
   f(\bm{x}) = a(x_2 - bx_1^2 + cx_1 - r)^2 + s(1 - t)\cos(x_1) + s
-  \label{eq:branin}
+  \label{eq:Branin}
 \end{equation}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Data Visualization/trueBraninHeatmap.png}
+  \includegraphics[width=0.9\textwidth]{figures/Data Visualization/trueBraninHeatmap.png}
   \caption{Heatmap of True Branin Function values with domain $\mc{X} = [-5, 10] \times [0, 15]$  with 1000 values per dimension.}
-  \label{fig:true_branin_heatmap}
+  \label{fig:true_Branin_heatmap}
 \end{figure}
 
-From \ref{fig:true_branin_heatmap}, one can see that the function's values fluctuate in a somewhat sinusoidal manner, with a large minimal "trench" spanning diagonally across the center of the domain with steadly increasing regions along the trench's sides. Therefore the function does not appear to be stationary.
+From figure \ref{fig:true_Branin_heatmap}, we can see that the function's values fluctuate in a somewhat sinusoidal manner, with a large minimal "trench" spanning diagonally across the center of the domain with steadily increasing regions along the trench's sides. Therefore the function does not appear to be stationary.
 
-In order to make the function more stationary, we tried couple of transformations. By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term and the 4th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (\emph{arc cos}) with the cumulative density function of the normal probability distribution (\emph{normal cdf}). However, taking the \emph{log} of the data gave us the most stationary result as shown in \ref{fig:log_branin_heatmap}. 
+In order to make the function more stationary, we tried a variety of transformations. By analyzing the equation, we note that the sinusoidal fluctuations can be attributed to both the added cosine term and the 4th order polynomial term. We thus attempted to pass the data through a transformation that combined an inverse cosine function (\emph{arc cos}) with the cumulative density function of the normal probability distribution (\emph{normal cdf}). However, taking the \emph{log} of the data gave us the most stationary result as shown in figure \ref{fig:log_Branin_heatmap}. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Data Visualization/Log_Branin_Heatmap.png}
-  \caption{Heatmap of logged Branin Function values with domain $\mc{X} = [-5, 10] \times [0, 15]$  with 1000 values per dimension. The plot shows the behavior of the Branin Function relatively more constant throughout the domain compare to the original function behavior.}
-  \label{fig:log_branin_heatmap}
+  \includegraphics[width=0.9\textwidth]{figures/Data Visualization/Log_Branin_Heatmap.png}
+  \caption{Heatmap of log Branin Function values with domain $\mc{X} = [-5, 10] \times [0, 15]$  with 1000 values per dimension. The plot shows the behavior of the Branin Function is more constant throughout the domain when compared to the original function's behavior.}
+  \label{fig:log_Branin_heatmap}
 \end{figure}
 
-Now, we plotted kernel density estimate (KDE) of LDA and SVM benchmarks (Fig.  \ref{fig:kde-lda-svm}A and \ref{fig:kde-lda-svm}C). By analyzing probability density graph, we identified tht both KDEs show log-normal distribution. Also, both estimates have relatively similar behavior but on significantly different scales.
+Next, we plotted a kernel density estimate (KDE) of LDA and SVM benchmarks (Fig.  \ref{fig:kde-lda-svm}A and \ref{fig:kde-lda-svm}C). By analyzing the resultant probability density graphs, we identified that both KDEs show log-normal distributions. Also, both estimates have relatively similar behavior but on significantly different scales.
 
-Since both KDEs show log-normal distribution, taking log of values gave us the normal distribution, which will give better performance (Fig. \ref{fig:kde-lda-svm}B and \ref{fig:kde-lda-svm}D). Both KDEs are more distributed throughout the graph and relatively less concentrated around the peak.
+Since both KDEs show log-normal distribution, the log of their values produces the normal distribution, which resulted in better performance (Fig. \ref{fig:kde-lda-svm}B and \ref{fig:kde-lda-svm}D). Both KDEs are more distributed throughout the graph and relatively less concentrated around the peak.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/kde_lda_svm.eps}
-  \caption{Kernel density estimates for LDA (green, A and B) and SVM (purple, C and D) datasets, along with estimates for their logs.}
+  \includegraphics[width=0.9\textwidth]{figures/kde_lda_svm.eps}
+  \caption{Kernel density estimates for LDA (green, A and B) and SVM (purple, C and D) datasets, along with the estimates for their logs.}
   \label{fig:kde-lda-svm}
 \end{figure}
 
-\section*{Model fitting}
+\section{Model fitting}
 \subsection*{Model fitting with Branin Function}
-For model fitting, we used 32 Sobol Sequence Branin Function training points and fit the data to the Gaussian Process model with constant mean value of 0, squared exponential covariance with constant value of length scale and output scale of 1. After maximizing the marginal likelihood, we got the following values of hyperparameters:
+For model fitting, we used 32 Sobol Sequence Branin Function training points and fit the data to a Gaussian Process (GP) model with constant mean value of 0, squared exponential covariance with constant value of length scale and output scale of 1. After maximizing the marginal likelihood, we obtained the following values for the hyperparameters:
 \begin{itemize}
   \item
     mean: 137.1865
   \item
-    cov: [1.3864 4.7366]
-    length: 4.004
-    output: 114.046
+    length scale: 4.004
+  \item
+    output scale: 114.046
 \end{itemize}
-During the procedure, we also had to fit likelihood, which we retrieve 0.001 noise likelihood.
-\textbf{Q: Do they agree with your expectations given your visualization?}
-Based on the \ref{fig:gp_post_mean_heatmap}, the mean should be around 150 which is reflected in our hyperparameter. The covariance value is also around ...INSERT INTERPRETATION
+The optimization procedure also fit the likelihood, resulting in a hyperparameter value of 0.001.
+
+Based on figure \ref{fig:gp_post_mean_heatmap} and figure \ref{fig:gp_postmean_and_trueval}, both the mean and the length scale values are in the right range. The range of the Branin Function extends from approximately 0 to approximately 350, with more mass below the approximate "midpoint" value of 175. Thus, an optimized function mean of 137.1865 is not unreasonable. The overall slowly oscillating behavior of the Branin Function also appears to have a "periodicity" of approximately six units; thus, a length scale of 4.004 is acceptable. The oscillations themselves have some combination of amplitudes that range from small towards the center of the function's domain to very large towards the function's domain's edges; thus, an output scale of 114.046 seems to be acceptable. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_Mean.png}
+  \includegraphics[width=0.9\textwidth]{figures/Model Fitting/GP_Posterior_Mean.png}
   \caption{Heatmap of GP Posterior Mean}
   \label{fig:gp_post_mean_heatmap}
 \end{figure}
 
-Comparing the predicted GP Posterior Mean and the True Branin Function values, \ref{fig:gp_postmean_and_trueval} shows that the true points have the darkest spots on the heatmap, which represents that the predicted and true values are almost alike. \textbf{Do you see systematic errors?} On the heatmap, places where we don't have the Branin Function values, as it gets farther away from the points, there are more absolute differences exist between predicted and true values.
+Comparing the predicted GP Posterior Mean and the True Branin Function values, figure \ref{fig:gp_postmean_and_trueval} shows that the true points lie in the darkest spots on the heatmap, which show areas where the predicted and true values are almost identical. Similarly, as the predictive mean's location departs from the areas where the true values are known, the absolute differences increase.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_Mean_vs_True_Branin.png}
+  \includegraphics[width=0.9\textwidth]{figures/Model Fitting/GP_Posterior_Mean_vs_True_Branin.png}
   \caption{Heatmap of GP Posterior Mean and True Branin values}
   \label{fig:gp_postmean_and_trueval}
 \end{figure}
 
-
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Model Fitting/GP_Posterior_s2_With_Training_Points.png}
+  \includegraphics[width=0.9\textwidth]{figures/Model Fitting/GP_Posterior_s2_With_Training_Points.png}
   \caption{Heatmap of the GP Posterior standard deviation}
   \label{fig:gp_post_std}
 \end{figure}
-\textbf{Q: Do the values make sense? Does the scale make sense? Does the standard deviation drop to near zero at your data points?}
+As shown in figure \ref{fig:gp_post_std}, as you approach the training data points, the standard deviation approaches zero; Areas far from the training points therefore have significantly higher uncertainty. Furthermore, the scale of the standard deviation extends from 0 to 25. This behavior is expected, as one would expect the GP model to be certain near the training points (where it knows the underlying function passes through), and more uncertain as it gets farther from these points. The scale of this uncertainty is similarly reasonable. As previously mentioned, the Branin Function has both small and large variations. Thus, the GP must return a relatively high standard deviation at the locations where it is uncertain in order to properly accommodate the large range of possible fluctuations.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Model Fitting/Z_Score_KDE.png}
+  \includegraphics[width=0.9\textwidth]{figures/Model Fitting/Z_Score_KDE.png}
   \caption{Kernel Density Estimate of the z-scores of the residuals between the GP posterior mean and true values}
   \label{fig:zscore_kde}
 \end{figure}
-Based on \ref{fig:zscore_kde}, the KDE of Z-score distribution follows approximately standard normal distrubtion with more concentrated peak in the middle.
+Based on \ref{fig:zscore_kde}, the KDE of Z-score distribution follows approximately standard normal distribution with more concentrated density at the peak.
 
 \subsection*{Model fitting with log transformation of Branin Function}
-Now, we repeated model fitting using a log transformation to the output of the Branin function. After maximizing the marginal likelihood with same condition as previous, we got the following values of hyperparameters:
+We repeated model fitting using a log transformation to the output of the Branin Function. After maximizing the marginal likelihood under the same conditions as the previous fitting attempt, we obtained the following hyperparameter values:
 \begin{itemize}
   \item
     mean: 3.6227
   \item
-    cov: [1.2007 0.4896]
-    length: 3.3224
-    output: 1.6316
+    length scale: 3.3224
+  \item
+    output scale: 1.6316
 \end{itemize}
-During the procedure, we also had to fit likelihood, which we retrieve 0.001 noise likelihood.
+Again, the optimization procedure also fit the likelihood, resulting in a hyperparameter value of 0.001.
 
-\textbf{Q: Do they agree with your expectations given your visualization}
+%Q: Do they agree with your expectations (length scale, output scale)
+The log Branin posterior mean ranges from approximately 0.5 to 6 as shown in figure \ref{fig:gp_post_mean_log}, with more area in color range beyond the midpoint value of 3.25. Thus, the hyperparameter mean value with slight increment from the "midpoint" follows our expectation. The range of the function also supports an output scale of 1.6316, which indicates a relatively "flat" function, as expected. Finally, the oscillatory behavior of the log branin function appears to be slightly less frequent; thus, a length scale of 3.32 is reasonable. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_Mean_Log.png}
+  \includegraphics[width=0.9\textwidth]{figures/Log Fits/GP_Posterior_Mean_Log.png}
   \caption{Heatmap of GP Posterior Mean of log transformed Branin Function values}
   \label{fig:gp_post_mean_log}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_vs_Log_True.png}
+  \includegraphics[width=0.9\textwidth]{figures/Log Fits/GP_Posterior_vs_Log_True.png}
   \caption{Heatmap of GP Posterior Mean and True log transformed Branin Function values}
   \label{fig:gp_post_mean_true_log}
 \end{figure}
-\textbf{Q: Compare the predicted values with the true values. Do you see systematic errors?}
+The absolute difference between the predicted values and the training points are nearly zero as shown in the darkest areas of figure \ref{fig:gp_post_mean_true_log} similar to the figure \ref{fig:gp_postmean_and_trueval}. Additionally, the values farther away from the training points have increasing absolute differences, including areas which show very high absolute differences.
+
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Log Fits/GP_Posterior_S2_and_Training_points.png}
-  \caption{Heatmap of GP Posterior Standard Deviation of log transformed Branin Funciton values}
+  \includegraphics[width=0.9\textwidth]{figures/Log Fits/GP_Posterior_S2_and_Training_points.png}
+  \caption{Heatmap of GP Posterior Standard Deviation of log transformed Branin Function values}
   \label{fig:gp_post_std_log}
 \end{figure}
-
-\textbf{Q: Do the values make sense? Does the scale make sense? Does the standard deviation drop to near zero at your data points?}
+Again, the standard deviation approaches zero as the predicted values approach the training points, as shown in figure \ref{fig:gp_post_std_log}. The scale of the standard deviation extends from 0 to approximately 0.7. As explained previously, this behavior is expected: the GP model should be more confident the closer it is to a training point. The application of the log function to the Branin model should also reduce the scale of the standard deviation, as seen. 
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Log Fits/Z_Score_KDE.png}
+  \includegraphics[width=0.9\textwidth]{figures/Log Fits/Z_Score_KDE.png}
   \caption{Kernel Density Estimate of z-score of log transformed Branin Function values}
   \label{fig:zscore_kde_log}
 \end{figure}
-Based on \ref{fig:zscore_kde_log}, the KDE of Z-score distribution follows approximately standard normal distrubtion, but much higher peak.
+Based on \ref{fig:zscore_kde_log}, the KDE of the Z-score distribution is similar a "focused" gaussian distribution. If we applied a Laplace approximation to fit the KDE to the Gaussian distribution, the resulting approximation would appear more Gaussian.
 
-\textbf{Q: Does the marginal likelihood improve? Does the model appear better calibrated?}
+By using a log transformation to the output of the Branin Function, the marginal likelihood is improved and more calibrated: the absolute difference between predicted and true values are much lower in figure \ref{fig:gp_post_mean_true_log} than in figure \ref{fig:gp_postmean_and_trueval}, which indicates that the log transformed has higher marginal likelihood.
 
 \subsection*{Bayesian Information Criterion (BIC)}
-In order to compare which model fits better with the dataset, we used BIC to derive a score for how well those choices fit a given dataset. To compute the BIC, we found the values of the hyperparameters maximizing the (log) marginal likelihood using \ref{eq:hyperparameter-estimate}, and then used \ref{eq:bic} where $\mid \theta \mid$ is the total number of hyperparameters and $\mid \data \mid$ is the number of observations. We used 3 for $\mid \theta \mid$ and 32 for $\mid \data \mid$. 
+In order to compare which model fits better with the dataset, we used the BIC to derive a score for how well those choices fit a given dataset. To compute the BIC, we found the values of the hyperparameters maximizing the (log) marginal likelihood using \ref{eq:hyperparameter-estimate}, and then used \ref{eq:bic} where $\mid \theta \mid$ is the total number of hyperparameters and $\mid \data \mid$ is the number of observations. We used three for $\mid \theta \mid$ and 32 for $\mid \data \mid$. 
 
-Based on \ref{eq:bic}, we want to minimize the first term as we do not want to overfit the model, but maximize the second term, which is increasing likelihood as higher likelihood is given when the model fits the dataset.
+From equation \ref{eq:bic}, it can be seen that the first term should be minimized to prevent overfitting, while the second term should be maximibut maximize the second term, which is increasing likelihood as higher likelihood is given when the model fits the dataset.
 
 \begin{equation}
   \hat \theta = \argmax_\theta \log p(y \mid X, \theta)
@@ -199,86 +200,93 @@ Based on \ref{eq:bic}, we want to minimize the first term as we do not want to o
   \label{eq:bic}
 \end{equation}
 
-\textbf{Compute the bic score for the data and model from the last part.}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{| l | l |}
+    \hline
+    Data       & BIC score \\
+    \hline
+    Branin     & 304.3118  \\
+    \hline
+    log Branin & 61.4710   \\
+    \hline
+  \end{tabular}
+  \caption{BIC score of data from model fitting (Branin and (log) Branin)}
+  \label{tab:basic_bic}
+\end{table}
 
-Now considering BIC as a function of the choice of mean and covariance functions $(\mu, K)$, we used MeanConst and 4 differenct covariance functions, covSEiso, covRQiso, sum of SE and RQ, and product of SE and RQ. \ref{tab:bic_score} shows the best model and BIC scores we found.
+Now considering BIC as a function of the choice of mean and covariance functions $(\mu, K)$, we used MeanConst and four different covariance functions, Squared Exponential (SE), Rational Quadratic (RQ), sum of SE and RQ, and product of SE and RQ. \ref{tab:bic_score} shows the best model and BIC scores we found.
 
 \begin{table}[H]
   \centering
-  \begin{tabular}{| c | c | c |}
+  \begin{tabular}{| l | l | l |}
     \hline
-    Data       & Model    & BIC score \\
+    Data       & Model                & BIC score \\
     \hline
-    Branin     & covRQiso & 299.367   \\
+    Branin     & Rational Quadratic   & 299.367   \\
     \hline
-    log Branin & covSEiso & 61.471    \\
+    log Branin & Squared Exponential  & 61.471    \\
     \hline
-    LDA        & covProd  & 6.777e+06 \\
+    LDA        & Product of SE and RQ & 6.777e+06 \\
     \hline
-    log LDA    & covRQiso & 17.298    \\
+    log LDA    & Rational Quadratic   & 17.298    \\
     \hline
-    SVM        & covProd  & -138.894  \\
+    SVM        & Product of SE and RQ & -138.894  \\
     \hline
-    log SVM    & covRQiso & -77.547   \\
+    log SVM    & Rational Quadratic   & -77.547   \\
     \hline
   \end{tabular}
   \caption{Computed BIC scores and best model for different datasets}
   \label{tab:bic_score}
 \end{table}
 
-\section*{Bayesian optimization}
+\section{Bayesian optimization}
 
 The best-fitting models were selected from the previous experiments. 
-Specifically, the Branin Model used a log-transformed dataset, a Constant Mean function, and a Squared Exponential covariance function.
-Similarly, the LDA Model used a log-transformed dataset, a Constant Mean Function, and a Rational Quadratic covariance Function.
-Finally, the SVM Model used a normal dataset with a Constant Mean Function and a product of the Rational Quadratic and Squared Exponential functions as its covariance function.
+Specifically, the Branin Model was log transformed and used a Constant Mean function and a SE covariance function.
+Similarly, the LDA Model was log transformed and used a Constant Mean Function and a RQ covariance Function.
+Finally, the SVM Model was not transformed and used a Constant Mean Function and a product of the RQ and SE functions as its covariance function.
 
 We then used the Expected Improvement (EI) Acquisition Function, defined from the course notes as:
 \begin{equation}
-  a_{ei}(\bm{x}) = (f' - \mu(\bm{x}))\Phi(f';\mu(\bm{x}),K(\bm{x},\bm{x})) + K(\bm{x},\bm{x})\mathcal{N}(f';\mu(\bm{x}),K(\bm{x},\bm{x}))
+  a_{EI}(\bm{x}) = (f' - \mu(\bm{x}))\Phi(f';\mu(\bm{x}),K(\bm{x},\bm{x})) + K(\bm{x},\bm{x})\mathcal{N}(f';\mu(\bm{x}),K(\bm{x},\bm{x}))
   \label{eq:Expected Improvement}
 \end{equation}
-Where $\Phi(\bm{x})$ is the Cumulative Probablity Density of the Normal Distribution, and f' is the minimum value of the current observations.
+Where $\Phi(\bm{x})$ is the Cumulative Probability Density of the Normal Distribution, and f' is the minimum value of the current observations.
 Note that the EI acquisition function combines both exploitation and exploration by using both the posterior mean and known minimum value, and the posterior standard deviation, respectively. 
 
-Using the previously selected 32 points, a GP model was fit using the aforementioned optmized settings and the following heatmaps of the posterior mean and standard deviation of the Branin function were created:
+Using the previously selected 32 points, a GP model was fit using the aforementioned optimized settings and the following heatmaps of the posterior mean and standard deviation of the log Branin Function were created:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Optimization Plots/EI_FMu_Log.png}
-  \caption{Predictive Posterior Mean of the log Branin Function, calculated using a previously optimized GP model trained on 32 Sobol Sequence points. 
-  Warmer colors indicate higher values. Note the predicted minimum areas in dark blue at the top left and bottom right corners of the plot.}
+  \includegraphics[width=0.9\textwidth]{figures/Optimization Plots/EI_FMu_Log.png}
+  \caption{Predictive Posterior Mean of the log Branin Function, calculated using a previously optimized GP model trained on 32 Sobol Sequence points. Warmer colors indicate higher values. Note the predicted minimum areas in dark blue at the top left and bottom right corners of the plot.}
   \label{fig:ei-fmu-log}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Optimization Plots/EI_S_Log.png}
-  \caption{Predictive Posterior Standard Deviation of the log Branin Function, calculated usinga previously optimized GP model trained on 32 Sobol Sequence points. 
-  Warmer colors indicate higher deviations and imply greater uncertainty in the prediction.}
+  \includegraphics[width=0.9\textwidth]{figures/Optimization Plots/EI_S_Log.png}
+  \caption{Predictive Posterior Standard Deviation of the log Branin Function, calculated using a previously optimized GP model trained on 32 Sobol Sequence points. Warmer colors indicate higher deviations and imply greater uncertainty in the prediction.}
   \label{fig:ei-fs-log}
 \end{figure}
 
-The EI value was then calculated using the posteriors and identified the point [7.658, 0] as the optimal point to test next. 
-A heatmap of the EI distribution is shown below:
+The EI function values were then calculated using the posteriors and the point [7.658, 0] was identified as the optimal point to observe next. 
+A heatmap of the EI distribution is shown below with the optimal observation location marked as a black point:
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{figures/Optimization Plots/EI_Log_Optimal_point.png}
-  \caption{Expected Improvement acquisition values of the optimized GP model trained on 32 Sobol Sequence points. Warmer colors indicate higher expected improvement. 
-  The maximum expected improvement is marked as a black point and denotes the optimal location for the next observation.}
+  \includegraphics[width=0.9\textwidth]{figures/Optimization Plots/EI_Log_Optimal_point.png}
+  \caption{Expected Improvement acquisition values of the optimized GP log Branin model trained on 32 Sobol Sequence points. Warmer colors indicate higher expected improvement. The maximum expected improvement is marked as a black point and denotes the optimal location for the next observation.}
   \label{fig:ei-optimalPoint-log}
 \end{figure}
 
-Analyzing \ref{fig:ei-fmu-log}, \ref{fig:ei-fs-log}, and \ref{fig:ei-optimalPoint-log} above, we reason that the proposed optimal testing point is ideal. 
-From the posterior mean, it can be seen that the point [7.658, 0] is within a region of predicted minimal values.
-Futhermore, from the posterior standard deviation, it can be seen that the point is also within a region of higher uncertainty and therefore reduced predictive confidence.
-Thus, it is plausible that the EI acquisition function would seek to test this area and point in order to identify a possible global minimum and improve confidence in an area of uncertainty. 
+Analyzing \ref{fig:ei-fmu-log}, \ref{fig:ei-fs-log}, and \ref{fig:ei-optimalPoint-log} above, we reason that the proposed optimal testing point is ideal. From the posterior mean, it can be seen that the point [7.658, 0] is within a region of predicted minimal values. Furthermore, from the posterior standard deviation, it can be seen that the point is also within a region of higher uncertainty and therefore reduced predictive confidence. Thus, it is plausible that the EI acquisition function would seek to test this area and specific point in order to identify a possible global minimum and improve confidence in an area of uncertainty. 
 
-The following bayesian active learning experiment was then applied independently to the Branin, LDA and SVM functions:
+The following bayesian active learning experiment was then applied independently to the log Branin, log LDA, and SVM functions:
 \begin{enumerate}
-  \item 5 initial observations were randomly selected, constituting the initial dataset $\mathcal{D}$
-  \item For the Branin Function only, a dense grid of 250,000 points was generated within the domain of the function
+  \item Five initial observations were randomly selected, constituting the initial dataset $\mathcal{D}$
+  \item For the log Branin Function only, a dense, evenly spaced grid of 250,000 points was generated within the domain of the function for use in calculating the GP predictive posterior
   \item A GP model using the respective aforementioned optimized settings was fit to $\mathcal{D}$
   \item A new point \emph{x} was found using the EI acquisition function and the GP predictive posterior
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$
@@ -290,90 +298,77 @@ The performance of each of the above experiments was evaluated using the "gap" m
   \text{gap} = \dfrac{f(\text{best found}) - f(\text{best initial})}{f(\text{maximum}) - f(\text{best initial})}
   \label{eq:gap}
 \end{equation}
+The gap can be interpreted as a measure of the accuracy or performance of the optimization; as the gap value approaches one, the attempted optimization approaches the true global minimum. 
 
-The gaps for the Branin, LDA, and SVM models were calculated to be 1.0000, 0.7932, and 0.9604, respectively. 
-This implies that EI successfully found a global minimum of the Branin function, but missed the global minimum of the LDA and SVM functions.
+The gaps for the log Branin, log LDA, and SVM models were calculated to be 1.0000, 0.7932, and 0.9604, respectively. 
+This implies that EI successfully found a global minimum of the log Branin Function, but missed the global minimum of the log LDA and SVM functions.
 
 The above bayesian active learning experiment was then modified as such:
 \begin{enumerate}
   \item A seed for the random number generator (RNG) was chosen
-  \item 5 initial observations were randomly selected, constituting the initial dataset $\mathcal{D}$
-  \item For the Branin Function only, a dense grid of 250,000 points was generated within the domain of the function for use in calculating the GP predictive posterior
+  \item Five initial observations were randomly selected, constituting the initial dataset $\mathcal{D}$. This initial dataset was then duplicated to form $\mathcal{D'}$
+  \item For the log Branin Function only, a dense, evenly spaced grid of 250,000 points was generated within the domain of the function for use in calculating the GP predictive posterior
   \item A GP model using the respective aforementioned optimized settings was fit to $\mathcal{D}$
   \item A new point \emph{x} was found using the EI acquisition function and the GP predictive posterior
   \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$
   \item Steps 4-6 were repeated 150 times, resulting in a final dataset $\mathcal{D}$ of 155 points
-  \item A new GP model using the respective aforementioned optimized setting was fit to the original initial dataset $\mathcal{D}$, now called $\mathcal{D}$'
+  \item A GP model using the respective aforementioned optimized setting was fit to $\mathcal{D'}$
   \item A new point \emph{x} was found using the Random Search (RS) acquisition function, which randomly selects a new point
-  \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D}$'
-  \item Steps 8-10 were repeated 150 times, resulting in a final dataset $\mathcal{D}$' of 155 points
+  \item The function value \emph{f(x)} was calculated and the point (\emph{x}, \emph{f(x)}) was added to $\mathcal{D'}$
+  \item Steps 8-10 were repeated 150 times, resulting in a final dataset $\mathcal{D'}$ of 155 points
 \end{enumerate}
-The above experiment was repeated 20 times with 20 different RNG seeds to create different random initializations for the Branin, LDA, and SVM functions, resulting in a total of 60 experiments. 
-The learning curves of the 60 experiments using only the first 30 new observations for both EI and RS acquisition are shown in the figures below:
+The above experiment was repeated 20 times with 20 different RNG seeds to create different random initializations for the log Branin, log LDA, and SVM functions, resulting in a total of 60 experiments. 
+The learning curves of these 60 trials using only the first 30 new observations for both EI and RS acquisition functions are shown in the figures below:
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/optimization_log_branin.eps}
-  \caption{Learning curves for 20 branin function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
-  Observe that EI consistently outperforms RS in both rate of GAP increase, and final GAP convergence at 30 observations.}
+  \includegraphics[width=\textwidth]{figures/optimization_log_Branin.eps}
+  \caption{Learning curves for 20 log Branin Function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. Observe that EI consistently outperforms RS in both rate of gap increase and final gap convergence at 30 observations.}
   \label{fig:ei-v-rand-branin}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/optimization_log_lda.eps}
-  \caption{Learning curves for 20 LDA function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. 
-  Note that EI and RS both consistently converge towards the same GAP value at 30 observations}
+  \caption{Learning curves for 20 log LDA function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. Note that EI and RS both consistently converge towards the same gap value at 30 observations}
   \label{fig:ei-v-rand-lda}
 \end{figure}
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/optimization_norm_svm.eps}
-  \caption{Learning curves for 20 SVM function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange.
-  It can be seen that EI performs at least as well as RS in the majority of experiments, but can find and get stuck in a local minima, as seen in Seed 18.}
+  \caption{Learning curves for 20 SVM function experiments. The EI acquisition function is shown in blue, and the RS acquisition function is shown in orange. It can be seen that EI performs at least as well as RS in the majority of experiments, but can find and get stuck in a local minima, as seen in Seed 18.}
   \label{fig:ei-v-rand-svm}
 \end{figure}
-From figures \ref{fig:ei-v-rand-branin}, and \ref{fig:ei-v-rand-svm} above, it can be seen that EI significantly outperforms RS on both the Branin Function and the SVM Function.
-Note that in these experiments, EI often converges to its final GAP value in significantly fewer observations than RS does, and that its final GAP values at 30 observations are generally higher than those of RS.
-This behavior was expected, as EI combines both exploitation and exploration together to identify locations with higher expected benefit, whereas RS only applies (random) exploration.
-The addition of exploitation and non-random exploration in EI allows it to actually navigate towards optima, whereas RS can only approach optima through luck. 
-However, there are cases where EI and RS have similar performance: from figure \ref{fig:ei-v-rand-lda}, it can be seen that the two acqusition functions perform similarly to each other in the majority of experiments at 30 observations. 
-We believe that EI's lack of performance on the LDA function can be attributed to a large amount of local minima; EI can often become stuck in local minima, thereby decreasing its performance, whereas RS is purely exploratory and therefore unhindered by the presence of any local optima.
+From figures \ref{fig:ei-v-rand-branin}, and \ref{fig:ei-v-rand-svm} above, it can be seen that EI significantly outperforms RS on both the log Branin and the SVM functions.
+It is evident that in these experiments, EI often converges to its final gap value in significantly fewer observations than RS does, and that its final gap values at 30 observations are generally higher than those of RS. This behavior was expected, as EI combines both exploitation and exploration together to identify locations with higher expected benefit, whereas RS only applies (random) exploration. The addition of exploitation and non-random exploration in EI allows it to actually navigate towards optima, whereas RS can only approach optima through chance. 
+However, there are cases where EI and RS have similar performance: from figure \ref{fig:ei-v-rand-lda}, it can be seen that the two acquisition functions perform similarly to each other in the majority of experiments at 30 observations. 
+We believe that EI's lack of performance on the log LDA function can be attributed to a large amount of local minima; EI can often become stuck in local minima, thereby decreasing its performance, whereas RS is purely exploratory and therefore unhindered by the presence of any local optima.
 
-The difference in performance between EI and RS can be further seen when one considers their mean gaps at 30, 60, 90, 120 and 150 observations, 
-as shown in the table below:
+The difference in performance between EI and RS can be further seen when one considers their mean gaps at 30, 60, 90, 120 and 150 observations, as shown in the table below:
 \begin{table}[H]
   \centering
   \begin{tabular}{| c | c | c | c | c | c | c |}
     \hline
     \# Observations & EI (Branin) & RS (Branin) & EI (LDA)& RS (LDA) & EI (SVM)& RS (SVM)\\ 
     \hline
-    30 & 0.8072 & 0.3409 & 0.4877 & 0.7122 & 0.8106 & 0.3728 \\ 
+    30 & 0.9072 & 0.3409 & 0.4877 & 0.7122 & 0.9106 & 0.3728 \\ 
     \hline
-    60 & 0.8532 & 0.6086 & 0.8611 & 0.7944 & 0.8415 & 0.5676 \\ 
+    60 & 0.9532 & 0.6086 & 0.9611 & 0.7944 & 0.9415 & 0.5676 \\ 
     \hline
-    90 & 0.8532 & 0.7124 & 0.8753 & 0.8174 & 0.8592 & 0.8190 \\ 
+    90 & 0.9532 & 0.7124 & 0.9753 & 0.9174 & 0.9592 & 0.9190 \\ 
     \hline
-    120 & 0.8532 & 0.8096 & 0.8753 & 0.8633 & 0.9018 & 0.8716 \\ 
+    120 & 0.9532 & 0.9096 & 0.9753 & 0.9633 & 0.9018 & 0.9716 \\ 
     \hline
-    150 & 0.8532 & 0.8202 & 0.9473 & 0.9016 & 0.9018 & 0.8737 \\ 
+    150 & 0.9532 & 0.9202 & 0.9473 & 0.9016 & 0.9018 & 0.9737 \\ 
     \hline
    \end{tabular}
-   \caption{Mean Gaps of EI and RS on the Branin, LDA, and SVM Functions at 30, 60, 90, 120 and 150 observations. 
-   Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS. Furthermore, for the Branin and SVM functions, 
-   EI achieves these higher values significantly faster than RS.}
-   \label{tab:ei-rs-datasets}
+   \caption{Mean Gaps of EI and RS on the log Branin, log LDA, and SVM functions at 30, 60, 90, 120 and 150 observations. Note that EI reaches a higher Gap at 150 observations in all functions when compared to RS, signifying better performance overall. Furthermore, for the log Branin and SVM functions, EI achieves these higher values significantly faster than RS does.}
+   \label{tab:ei-rs-observations}
 \end{table}
 
-In all cases, it is evident that EI outperforms RS on all three functions, including LDA, at 150 observations. 
-Additionally, EI requires less observations to achieve higher gap values, implying a significantly faster learning rate than RS.
-We also note that EI likely spends considerable time navigating local minima in the LDA function, 
-as evident by its noticeably worse performance at 30 observations when compared to that of RS. 
-However, EI for LDA rapidly improves following this local-minima exploration and quickly outperforms RS. 
-It is also important to note that on average, no method was able to find the global minima. 
-This result was expected for RS, which would need to be extraordinarily lucky to find the global minima, but was somewhat surprising for EI.
-It appears that in the limit, EI may become entrenched in local minima and thus converges towards a suboptimal result. 
+In all cases, it is evident that EI outperforms RS on all three functions, including log LDA, at 150 observations. 
+Additionally, EI generally requires less observations to achieve higher gap values, implying a faster learning rate than RS. We also note that EI likely spends considerable time early on navigating local minima in the log LDA function, 
+as evident by its noticeably worse performance at 30 observations when compared to that of RS. However, EI for log LDA rapidly improves following this local-minima exploration and quickly outperforms RS. It is also important to note that on average, no method was able to find the global minima. This result was expected for RS, which would need to be extraordinarily lucky to find the global minima, but was somewhat surprising for EI. It appears that in the limit, EI may become entrenched in local minima and thus converges towards a suboptimal result. 
 
-We more rigorously compare the performance of EI and RS on all three functions using a paired t-test and evaluate the null hypothesis that the gap values attained for EI and RS come from the same distribution (i.e. the performance of EI and RS are equivalent or similar).
-We begin the test using only 30 observations for both EI and RS and calculate the corresponding p-values, as seen in the table below:
+We more rigorously compare the performance of EI and RS on all three functions using a paired t-test and evaluate the null hypothesis that the gap values attained for EI and RS come from the same distribution (i.e. the performance of EI and RS are equivalent or similar). We begin the test using only 30 observations for both EI and RS and calculate the corresponding p-values, as seen in the table below:
 
 \begin{table}[H]
   \centering
@@ -381,19 +376,20 @@ We begin the test using only 30 observations for both EI and RS and calculate th
     \hline
     Function & P-Value  \\
     \hline
-    Branin   & 5.39E-04 \\
+    Log Branin   & 5.39E-04 \\
     \hline
-    LDA      & 0.3774   \\
+    Log LDA      & 0.3774   \\
     \hline
     SVM      & 0.0387   \\
     \hline
   \end{tabular}
-  \caption{}
-  \label{tab:ei-rs-p}
+  \caption{P-Values comparing the similarity of performance between EI and GAP on the log Branin, log LDA and SVM functions. Higher P-Values indicate more similar performance.}
+  \label{tab:ei-rs-pvals}
 \end{table}
 
-We then begin RS at one observation and incremement the number of observations for RS while holding EI at 30 observations until the P-value exceeeds 0.05.
-The resultant number of observations before RS attains possibly similar performance as EI is shown below:
+From the table above, it is quite obvious that at 30 observations, EI and RS have significantly different performance on the log Branin and SVM functions; however, the two acquisition functions have similar performance on the LDA function. Such behavior was supported visually in figures \ref{fig:ei-v-rand-branin}, \ref{fig:ei-v-rand-lda} and \ref{fig:ei-v-rand-svm}.
+
+To identify the number of observations required for RS and EI to exhibit similar performance, we then began RS at one observation and increment the number of observations for RS while holding EI at 30 observations until the P-value exceeds 0.05. The resultant number of observations before RS attains possibly similar performance to EI is shown below:
 
 \begin{table}[H]
   \centering
@@ -401,43 +397,74 @@ The resultant number of observations before RS attains possibly similar performa
     \hline
     Function & Observations Required & P-Value \\
     \hline
-    Branin & 59 & 0.0624 \\
+    Log Branin & 59 & 0.0624 \\
     \hline
-    LDA & 10 & 0.0599 \\
+    Log LDA & 10 & 0.0599 \\
     \hline
     SVM & 3 & 0.0951 \\
     \hline
   \end{tabular}
   \caption{}
-  \label{}
+  \label{tab:ei-rs-pvals-to-equivalence}
 \end{table}
 
-Look at tables <><> and <><>, one can see that in the branin function, EI significantly outperforms RS. 
-It isn't until 59 additional points have been observed before RS and EI show possibly similar performance.
-However, it is also evident that RS likely performs as well as EI on the LDA function. This was expected, given their similar learning curves above in figure \ref{fig:ei-v-rand-lda}.
-Perhaps more interestingly, the performance of RS varies significantly relative to that of EI; when there are less observations, the two acqusition methods demonstrate similar performance. 
-However, as the number of observations increase, the two methods begin to differ. 
-Another similarly iterative paired t-test experiment was performed, and it was determined that 44 new observations are required before the performance of EI and RS remain consistently comparable.
+Looking at tables \ref{tab:ei-rs-pvals} and \ref{tab:ei-rs-pvals-to-equivalence}, one can see that in the log Branin Function, EI significantly outperforms RS. Specifically, 59 additional points must be observed before RS and EI show possibly similar performance.
+However, it is also evident that RS likely performs as well as EI on the log LDA function. This was expected, given their similar learning curves above in figure \ref{fig:ei-v-rand-lda}.
+Perhaps more interestingly, the performance of RS varies significantly relative to that of EI for the SVM function: when there are less observations, the two acquisition methods, on average, demonstrate similar performance. However, as the number of observations increase, the two methods begin to differ before gradually converging with each other again. Another similarly iterative paired t-test experiment was performed, and it was determined that such oscillatory behavior continued until 44 new observations were attained, after which the performance of EI and RS remained consistently comparable.
 
-\section*{Bonus}
-For the bonus section, we implemented two more acquisition functions: max variance and lower confidence bound (LCB). We chose to implement max variance as one of our acquisition functions because it seemed like an intuitive way to explore a function's values and shape
+\section{Bonus}
+For the bonus section, we implemented two more acquisition functions: max
+variance and lower confidence bound (LCB). We also tried optimizing hyperparameters with the addition of each observation to the data set, dubbed ``online optimization'' (OO) for fun, and injected more exploration by randomly sampling the next point instead of using the acquisition function suggested point with some probability.
 
-\begin{align}
+\subsection*{More Acquisition Functions}
+We chose to implement max variance (eq. \ref{eq:max-variance}) as one of our
+acquisition functions because it seemed like an intuitive way to explore a
+function's values and shape. If our objective is to build a model of a target
+function by actively searching the parameter space, then it makes sense to
+use our current belief about $f$ (the posterior) to pick the next point to
+sample. In the case of max variance, we would sample where our model is least
+certain. \emph{A priori}, we wouldn't expect max variance to be optimal for
+identifying the minima of $f$ since the objective it is optimizing only
+incentivizes exploration and not exploitation.
+\begin{equation}
   \alpha_{\max \text{Var}}(x) = K(x, x)
-\end{align}
+  \label{eq:max-variance}
+\end{equation}
 
-We then compared their performances
-with EI when used on their own and with two heuristics.
+We also selected the minimization formulation of the upper confidence bound acquisition function, dubbed lower confidence bound (eq. \ref{eq:lcb}). This  computes the trade off between exploitation and exploration directly by mixing naive greedy exploitation with just the minimum of the mean function and max variance from before.
+\begin{equation}
+  \alpha_{LCB}(x; \beta) = \beta \sigma(x) - \mu(x), \text{ where } \sigma(x) = \sqrt{K(x, x)}
+  \label{eq:lcb}
+\end{equation}
+Looking at it's formulation, we can see that it is the difference between the
+standard deviation and the mean function value of the posterior. It is also
+parameterized by $\beta$, which allows us to control the amount of
+exploration we want to do. We can see that the function will be greatest when
+the mean function value is low and when the variance is high. LCB effectively
+addresses the limitation of the max variance acquisition function by
+extending it to do exploitation as well.
 
-First, we implemented a wrapper for aquisition functions that selects a point
+We evaluated the performance of each acquisition function on a 300-by-300
+grid from the Branin function using a procedure similar to the one used in
+Section 3: starting with five randomly selected points, we fit a GP, computed
+acquisition values, used the maximum of those values to choose our next
+point, and computed the gap value of the new data set. We did ten trials with
+100 iterations of active observation for each function and averaged the gap
+values to get those shown in Figure \ref{fig:bonus-gaps} as solid lines.
+
+On their own, max variance and LCB are slower to find the global minimum than expected improvement. Although not shown in the figure, max variance performed similarly to random search. This is what we expected since max variance  oesd not do a
+
+\subsectionny*{Online Optimization}
+
+First, we implemented a wrapper for acquisition functions that selects a point
 at random with probability $p = 0.1$; we dubbed this heuristic ``random
-restarts'' (RR). We also tried each aquisition function while minimizing the
+restarts'' (RR). We also tried each acquisition function while minimizing the
 model's hyperparameters after each iteration; we called this ``online
 optimization'' (OO).
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/bonus-gaps.eps}
+  \includegraphics[width=0.9\textwidth]{figures/bonus-gaps-by-acqfn.eps}
   \caption{A busy plot showing gap as a function of the number of
   observations made.}
   \label{fig:bonus-gaps}
