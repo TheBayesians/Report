@@ -181,14 +181,14 @@ Again, the standard deviation approaches zero as the predicted values approach t
   \caption{Kernel Density Estimate of z-score of log transformed Branin Function values}
   \label{fig:zscore_kde_log}
 \end{figure}
-Based on \ref{fig:zscore_kde_log}, the KDE of the Z-score distribution is similar a "focused" gaussian distribution. If we applied a Laplace approximation to fit the KDE to the Gaussian distribution, the resulting approximation would appear more Gaussian.
+Based on figure \ref{fig:zscore_kde_log}, the KDE of the Z-score distribution is similar a "focused" gaussian distribution. If we applied a Laplace approximation to fit the KDE to the Gaussian distribution, the resulting approximation would appear more Gaussian.
 
 By using a log transformation to the output of the Branin Function, the marginal likelihood is improved and more calibrated: the absolute difference between predicted and true values are much lower in figure \ref{fig:gp_post_mean_true_log} than in figure \ref{fig:gp_postmean_and_trueval}, which indicates that the log transformed has higher marginal likelihood.
 
 \subsection*{Bayesian Information Criterion (BIC)}
-In order to compare which model fits better with the dataset, we used the BIC to derive a score for how well those choices fit a given dataset. To compute the BIC, we found the values of the hyperparameters maximizing the (log) marginal likelihood using \ref{eq:hyperparameter-estimate}, and then used \ref{eq:bic} where $\mid \theta \mid$ is the total number of hyperparameters and $\mid \data \mid$ is the number of observations. We used three for $\mid \theta \mid$ and 32 for $\mid \data \mid$. 
+In order to compare which model fits better with the dataset, we used the BIC to derive a score for how well those choices fit a given dataset. To compute the BIC, we found the values of the hyperparameters maximizing the (log) marginal likelihood using eq.\ref{eq:hyperparameter-estimate}, and then used eq. \ref{eq:bic} where $\mid \theta \mid$ is the total number of hyperparameters and $\mid \data \mid$ is the number of observations. We used three for $\mid \theta \mid$ and 32 for $\mid \data \mid$. 
 
-From equation \ref{eq:bic}, it can be seen that the first term should be minimized to prevent overfitting, while the second term should be maximibut maximize the second term, which is increasing likelihood as higher likelihood is given when the model fits the dataset.
+From equation eq.\ref{eq:bic}, it can be seen that the first term should be minimized to prevent overfitting, while the second term should be maximized, since it corresponds to the model likelihood. Overall, lower BIC values imply improved model fit. 
 
 \begin{equation}
   \hat \theta = \argmax_\theta \log p(y \mid X, \theta)
@@ -215,7 +215,7 @@ From equation \ref{eq:bic}, it can be seen that the first term should be minimiz
   \label{tab:basic_bic}
 \end{table}
 
-Now considering BIC as a function of the choice of mean and covariance functions $(\mu, K)$, we used MeanConst and four different covariance functions, Squared Exponential (SE), Rational Quadratic (RQ), sum of SE and RQ, and product of SE and RQ. \ref{tab:bic_score} shows the best model and BIC scores we found.
+Now considering BIC as a function of the choice of mean and covariance functions $(\mu, K)$, we used MeanConst and four different covariance functions, Squared Exponential (SE), Rational Quadratic (RQ), sum of SE and RQ, and product of SE and RQ. Table \ref{tab:bic_score} shows the best model and BIC scores we found.
 
 \begin{table}[H]
   \centering
@@ -281,7 +281,7 @@ A heatmap of the EI distribution is shown below with the optimal observation loc
   \label{fig:ei-optimalPoint-log}
 \end{figure}
 
-Analyzing \ref{fig:ei-fmu-log}, \ref{fig:ei-fs-log}, and \ref{fig:ei-optimalPoint-log} above, we reason that the proposed optimal testing point is ideal. From the posterior mean, it can be seen that the point [7.658, 0] is within a region of predicted minimal values. Furthermore, from the posterior standard deviation, it can be seen that the point is also within a region of higher uncertainty and therefore reduced predictive confidence. Thus, it is plausible that the EI acquisition function would seek to test this area and specific point in order to identify a possible global minimum and improve confidence in an area of uncertainty. 
+Analyzing figures \ref{fig:ei-fmu-log}, \ref{fig:ei-fs-log}, and \ref{fig:ei-optimalPoint-log} above, we reason that the proposed optimal testing point is ideal. From the posterior mean, it can be seen that the point [7.658, 0] is within a region of predicted minimal values. Furthermore, from the posterior standard deviation, it can be seen that the point is also within a region of higher uncertainty and therefore reduced predictive confidence. Thus, it is plausible that the EI acquisition function would seek to test this area and specific point in order to identify a possible global minimum and improve confidence in an area of uncertainty. 
 
 The following bayesian active learning experiment was then applied independently to the log Branin, log LDA, and SVM functions:
 \begin{enumerate}
@@ -404,7 +404,7 @@ To identify the number of observations required for RS and EI to exhibit similar
     SVM & 3 & 0.0951 \\
     \hline
   \end{tabular}
-  \caption{}
+  \caption{Number of observations required for RS before it achieves possibly similar performance to EI with 30 observations for the log Branin, log LDA, and SVM functions.}
   \label{tab:ei-rs-pvals-to-equivalence}
 \end{table}
 
@@ -452,17 +452,14 @@ point, and computed the gap value of the new data set. We did ten trials with
 100 iterations of active observation for each function and averaged the gap
 values to get those shown in Figure \ref{fig:bonus-gaps} as solid lines.
 
-On their own, max variance and LCB are slower to find the global minimum than expected improvement. Although not shown in the figure, max variance performed similarly to random search. This is what we expected since max variance  oesd not do a
+On their own, max variance and LCB are slower to find the global minimum than
+expected improvement. Although not shown in the figure, max variance
+performed similarly to random search. This is what we expected since max
+variance does not do any exploitation. LCB performs relatively better, but is
+slower to move out of local minima. This is likely because of it's
+naive-greed nature and is somewhat expected.
 
-\subsectionny*{Online Optimization}
-
-First, we implemented a wrapper for acquisition functions that selects a point
-at random with probability $p = 0.1$; we dubbed this heuristic ``random
-restarts'' (RR). We also tried each acquisition function while minimizing the
-model's hyperparameters after each iteration; we called this ``online
-optimization'' (OO).
-
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/bonus-gaps-by-acqfn.eps}
   \caption{A busy plot showing gap as a function of the number of
@@ -470,5 +467,12 @@ optimization'' (OO).
   \label{fig:bonus-gaps}
 \end{figure}
 
+\subsection*{Forcing More Exploration}
+It is possible for our acquisition values to get stuck in local minima for too long. To mitigate this, we force each acquisition function to do more exploration by using a randomly sampled point with probability $p = 0.1$ instead of the one suggested by the acquisition function. From Figure \ref{fig:bonus-gaps}, we can see that occasionally picking random samples did not help our models converge. It is possible that this is true only for the Branin function, but we can't say from this experiment alone.
+
+\subsection*{Online Optimization}
+We also tried optimizing the model hyperparameters after each iteration. This
+is representative of how Bayesian optimization is performed in practice. It
+makes sense to do this for acquisition functions that rely on the model posterior. If we are evaluating an expectation, like in EI, then it makes sense to use the posterior of the most-likely model. For LCB, we use the mean and variance of the posterior directly, which means that it's performance will improve if we have better estimates of both from a more likely model. We didn't expect max variance to improve because it's lack of exploitation still constrains its performance even with optimized hyperparameters. These hypotheses are confirmed in Figure \ref{fig:bonus-gaps}. The gap values with online optimization converge to one faster for both EI and LCB. Here we see that LCB actually converges faster that EI with online optimization.
 
 \end{document}
